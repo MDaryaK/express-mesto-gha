@@ -4,18 +4,26 @@ const {
   getCards, createCard, removeCard, toggleCardLike,
 } = require('../controllers/cards');
 
+const {
+  cardPreValidator,
+} = require('../middlewares');
+
+const {
+  createCardReqCheck, cardIdReqCheck,
+} = cardPreValidator;
+
 router
   .route('/')
   .get(getCards)
-  .post(createCard);
+  .post(createCardReqCheck, createCard);
 
 router
   .route('/:cardId')
-  .delete(removeCard);
+  .delete(cardIdReqCheck, removeCard);
 
 router
   .route('/:cardId/likes')
-  .put(toggleCardLike)
-  .delete(toggleCardLike);
+  .put(cardIdReqCheck, toggleCardLike)
+  .delete(cardIdReqCheck, toggleCardLike);
 
 module.exports = router;

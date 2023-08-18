@@ -1,3 +1,4 @@
+const { isCelebrate } = require('celebrate');
 const BadRequestError = require('../errors/BadRequest');
 
 const handleValidationErrorDB = (err) => {
@@ -10,9 +11,9 @@ const handleValidationErrorDB = (err) => {
 const createError = (err) => {
   let error = { ...err };
   error.message = err.message;
-
+  
+  if (isCelebrate(error)) error = new BadRequestError(err.message);
   if (error.message.includes('validation failed')) error = handleValidationErrorDB(error);
-  if (error.message.includes('failed for value')) error = new BadRequestError('Неверный тип');
 
   return error;
 };

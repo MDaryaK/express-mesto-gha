@@ -37,7 +37,7 @@ exports.updateUserAvatar = (req, res, next) => {
   const { _id: id } = req.user;
   const { avatar } = req.body;
 
-  User.findByIdAndUpdate(id, { avatar })
+  User.findByIdAndUpdate(id, { avatar }, { new: true })
     .orFail(new NotFoundError('Пользователь с _id не найден'))
     .then((user) => res.send(user))
     .catch(next);
