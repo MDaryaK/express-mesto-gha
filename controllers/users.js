@@ -36,9 +36,9 @@ module.exports.addUser = async (req, res, next) => {
       next(new ConflictError('Пользователь с таким email уже зарегистрирован'));
     } else if (error instanceof mongoose.Error.ValidationError) {
       next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
+    } else {
+      next(error);
     }
-
-    next(error);
   }
 };
 
@@ -47,7 +47,7 @@ module.exports.getUsers = async (req, res, next) => {
     const user = await User.find({});
     res.send(user);
   } catch (e) {
-    next();
+    next(e);
   }
 };
 

@@ -32,7 +32,7 @@ module.exports.getCards = async (req, res, next) => {
     const cards = await Card.find({});
     res.send(cards);
   } catch (e) {
-    next();
+    next(e);
   }
 };
 
@@ -43,7 +43,7 @@ module.exports.deleteCard = async (req, res, next) => {
       if (!card.owner.equals(req.user._id)) {
         next(new ForbiddenError('Вы не можете удалять чужие карточки'));
       }
-      Card.findByIdAndRemove(req.params.cardId)
+      Card.deleteOne({ _id: req.params.cardId })
         .orFail()
         .then(() => res.send({ message: 'Карточка успешно удалена' }))
         .catch((error) => {
