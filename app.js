@@ -1,35 +1,36 @@
 const express = require('express');
-const { connect } = require('mongoose');
+const mongoose = require('mongoose');
+const { errors: celebrateErrors } = require('celebrate');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const router = require('./routes/index');
 
-const error = require('./controllers/error');
-const routes = require('./routes');
+const errors = require('./middlewares/errors');
+
+const {
+  PORT = 3000,
+  MESTO_DB = 'mongodb://localhost:27017/',
+} = process.env;
 
 const app = express();
-const port = 3000;
 
-(async () => {
-  try {
-    await connect('mongodb://localhost:27017/', {
-      useNewUrlParser: true,
-    });
-  } catch (e) {
-    console.error('DB', e);
-  }
-})();
-
-app.use((req, res, next) => {
-  req.user = {
-    _id: '64de8837453e2fcc9fc60a5a',
-  };
-
-  next();
+mongoose.connect(MESTO_DB, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
 });
 
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+});
+
+app.use(limiter);
+
+app.use(helmet());
 app.use(express.json());
-app.use(routes);
+app.use('/', router);
 
-app.use(error);
+app.use(celebrateErrors());
+app.use(errors);
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
-});
+app.listen(PORT);

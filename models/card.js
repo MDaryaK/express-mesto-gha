@@ -1,25 +1,34 @@
 const mongoose = require('mongoose');
 
+const validateUrl = require('../utils/constants');
+
 const cardSchema = new mongoose.Schema({
   name: {
     type: String,
-    minLength: 2,
-    maxLength: 30,
     required: true,
+    minlength: 2,
+    maxlength: 30,
+  },
+  link: {
+    type: String,
+    required: true,
+    validate: {
+      validator(v) {
+        return validateUrl.test(v);
+      },
+      message: 'Введите URL',
+    },
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user',
     required: true,
   },
-  likes: {
-    type: [[mongoose.Schema.Types.ObjectId]],
+  likes: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'user',
     default: [],
-  },
-  link: {
-    type: String,
-    required: true,
-  },
+  }],
   createdAt: {
     type: Date,
     default: Date.now,
