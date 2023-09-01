@@ -36,27 +36,6 @@ module.exports.getCards = async (req, res, next) => {
   }
 };
 
-// module.exports.deleteCard = async (req, res, next) => {
-//   try {
-//     const card = await Card.findById(req.params.cardId);
-//
-//     if (!card.owner.equals(req.user._id)) {
-//       next(new ForbiddenError('Вы не можете удалять чужие карточки'));
-//     }
-//
-//     await Card.findByIdAndRemove(req.params.cardId).orFail();
-//     res.send({ message: 'Карточка успешно удалена' });
-//   } catch (error) {
-//     if (error instanceof mongoose.Error.CastError) {
-//       next(new BadRequestError('Некорректный id'));
-//     } else if (error instanceof mongoose.Error.DocumentNotFoundError) {
-//       next(new NotFoundError('Карточка с указанным id не найдена'));
-//     } else {
-//       next(error);
-//     }
-//   }
-// };
-
 module.exports.deleteCard = async (req, res, next) => {
   Card.findById(req.params.cardId)
     .orFail()
@@ -129,5 +108,3 @@ module.exports.deleteLike = async (req, res, next) => {
     }
   }
 };
-
-
